@@ -18,8 +18,6 @@ public:
     std::array<uint8_t, 32> sender_pub_key;
     // Recipient address
     Address destination;
-    // Recipient account type
-    uint8_t destination_type;
     // Transaction value
     uint64_t amount;
     // Transaction fee
@@ -27,13 +25,12 @@ public:
     // Validity start (block) height
     uint32_t vsh;
     // Sender signature
-    std::vector<uint8_t> signature;
+    std::array<uint8_t, 64> signature;
 
     Transaction() = default;
-    Transaction(std::array<uint8_t, 32> sender, Address dest, uint8_t dest_type, uint64_t amount, uint64_t fee, uint32_t vsh)
+    Transaction(std::array<uint8_t, 32> sender, Address dest, uint64_t amount, uint64_t fee, uint32_t vsh)
         : sender_pub_key(sender)
         , destination(dest)
-        , destination_type(dest_type)
         , amount(amount)
         , fee(fee)
         , vsh(vsh)

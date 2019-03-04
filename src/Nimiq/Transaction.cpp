@@ -20,10 +20,10 @@ std::vector<uint8_t> Transaction::serialize() const {
     data.push_back(0x00); // Basic TX type
     data.insert(data.end(), sender_pub_key.begin(), sender_pub_key.end());
     data.insert(data.end(), destination.bytes.begin(), destination.bytes.end());
-    data.push_back(destination_type);
     encode64(amount, data);
     encode64(fee, data);
     encode32(vsh, data);
+    data.push_back(NETWORK_ID);
     data.insert(data.end(), signature.begin(), signature.end());
 
     return data;
@@ -38,7 +38,7 @@ std::vector<uint8_t> Transaction::getPreImage() const {
     data.insert(data.end(), sender.bytes.begin(), sender.bytes.end());
     data.push_back(0); // Sender is basic account type
     data.insert(data.end(), destination.bytes.begin(), destination.bytes.end());
-    data.push_back(destination_type);
+    data.push_back(0); // Recipient is basic account type
     encode64(amount, data);
     encode64(fee, data);
     encode32(vsh, data);
