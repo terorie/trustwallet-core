@@ -10,9 +10,6 @@
 #include <stdint.h>
 #include <vector>
 
-#define CAST32(x)    ((uint32_t)(x))
-#define CAST64(x)    ((uint64_t)(x))
-
 namespace TW {
 namespace Nimiq {
 
@@ -37,10 +34,10 @@ static inline void encode32(uint32_t val, std::vector<uint8_t>& data) {
 
 /// Decodes a 32-bit value from the provided buffer.
 static inline uint32_t decode32(const uint8_t *_Nonnull src) {
-    return CAST32(src[3])
-        | (CAST32(src[2]) << 8)
-        | (CAST32(src[1]) << 16)
-        | (CAST32(src[0]) << 24);
+    return static_cast<uint32_t>(src[3])
+        | (static_cast<uint32_t>(src[2]) << 8)
+        | (static_cast<uint32_t>(src[1]) << 16)
+        | (static_cast<uint32_t>(src[0]) << 24);
 }
 
 /// Encodes a 64-bit value into the provided buffer.
@@ -57,14 +54,14 @@ static inline void encode64(uint64_t val, std::vector<uint8_t>& data) {
 
 /// Decodes a 64-bit value from the provided buffer.
 static inline uint64_t decode64(const uint8_t *_Nonnull src) {
-    return CAST64(src[7])
-        | (CAST64(src[6]) << 8)
-        | (CAST64(src[5]) << 16)
-        | (CAST64(src[4]) << 24)
-        | (CAST64(src[3]) << 32)
-        | (CAST64(src[2]) << 40)
-        | (CAST64(src[1]) << 48)
-        | (CAST64(src[0]) << 56);
+    return static_cast<uint64_t>(src[7])
+        | (static_cast<uint64_t>(src[6]) << 8)
+        | (static_cast<uint64_t>(src[5]) << 16)
+        | (static_cast<uint64_t>(src[4]) << 24)
+        | (static_cast<uint64_t>(src[3]) << 32)
+        | (static_cast<uint64_t>(src[2]) << 40)
+        | (static_cast<uint64_t>(src[1]) << 48)
+        | (static_cast<uint64_t>(src[0]) << 56);
 }
 
 }} // namespace
