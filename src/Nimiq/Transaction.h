@@ -14,25 +14,34 @@ namespace Nimiq {
 class Transaction {
     /// TODO: Only supports Nimiq basic transactions atm
 public:
-    uint64_t amount;
-    uint64_t fee;
+    // Sender public key
     std::array<uint8_t, 32> sender_pub_key;
-    uint8_t sender_type;
+    // Recipient address
     Address destination;
+    // Recipient account type
     uint8_t destination_type;
+    // Transaction value
+    uint64_t amount;
+    // Transaction fee
+    uint64_t fee;
+    // Validity start (block) height
+    uint32_t vsh;
+    // Sender signature
     std::vector<uint8_t> signature;
 
     Transaction() = default;
-    Transaction(uint64_t amount, uint64_t fee, uint8_t sender_type, Address destination, uint8_t destination_type)
-        : amount(amount)
+    Transaction(std::array<uint8_t, 32> sender, Address dest, uint8_t dest_type, uint64_t amount, uint64_t fee, uint32_t vsh)
+        : sender_pub_key(sender)
+        , destination(dest)
+        , destination_type(dest_type)
+        , amount(amount)
         , fee(fee)
-        , sender_type(sender_type)
-        , destination(destination)
-        , destination_type(destination_type)
+        , vsh(vsh)
         {}
 
 public:
     std::vector<uint8_t> serialize() const;
+    std::vector<uint8_t> getPreImage() const;
 };
 
 }} // namespace

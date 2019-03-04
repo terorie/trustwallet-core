@@ -12,10 +12,38 @@ using namespace TW;
 using namespace TW::Nimiq;
 
 const uint8_t NETWORK_ID = 42;
+const uint8_t EMPTY_FLAGS = 0;
 
 std::vector<uint8_t> Transaction::serialize() const {
     std::vector<uint8_t> data;
+
+    data.push_back(0x00); // Basic TX type
+    data.insert(data.end(), sender_pub_key.begin(), sender_pub_key.end());
+    data.insert(data.end(), destination.bytes.begin(), destination.bytes.end());
+    data.push_back(destination_type);
     encode64(amount, data);
     encode64(fee, data);
+    encode32(vsh, data);
+    data.insert(data.end(), signature.begin(), signature.end());
+
+    return data;
+}
+
+std::vector<uint8_t> Transaction::getPreImage() const {
+    std::vector<uint8_t> data;
+
+    Address sender(sender_pub_key);
+
+    encode16(0x00, data); // Data size (+ 0 bytes of data)
+    data.insert(data.end(), sender.bytes.begin(), sender.bytes.end());
+    data.push_back(0); // Sender is basic account type
+    data.insert(data.end(), destination.bytes.begin(), destination.bytes.end());
+    data.push_back(destination_type);
+    encode64(amount, data);
+    encode64(fee, data);
+    encode32(vsh, data);
+    data.push_back(NETWORK_ID);
+    data.push_back(EMPTY_FLAGS);
+
     return data;
 }
