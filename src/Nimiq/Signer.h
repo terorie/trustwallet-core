@@ -22,3 +22,8 @@ public:
 };
 
 }} // namespace
+
+/// Wrapper for C interface.
+struct TWNimiqSigner {
+    TW::Nimiq::Signer impl;
+};

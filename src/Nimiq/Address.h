@@ -52,3 +52,8 @@ static inline bool operator==(const Address& lhs, const Address& rhs) {
 }
     
 }} // namespace
+
+/// Wrapper for C interface.
+struct TWNimiqAddress {
+    TW::Nimiq::Address impl;
+};
