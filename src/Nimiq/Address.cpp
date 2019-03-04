@@ -135,7 +135,7 @@ std::string Address::string() const {
 }
 
 static void check_append(std::string &check, char c) {
-    if (c >= 48 && c <= 57)
+    if (c >= '0' && c <= '9')
         check.push_back(c);
     else
         check.append(std::to_string(static_cast<int>(c - 55)));
