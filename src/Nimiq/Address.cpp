@@ -91,7 +91,7 @@ Address::Address(const std::vector<uint8_t>& data) {
 Address::Address(const std::array<uint8_t, 32> publicKey) {
     auto hash = std::array<uint8_t, 32>();
     blake2b(publicKey.data(), 32, hash.data(), hash.size());
-    std::copy(hash.begin(), hash.end() - Address::size, bytes.begin());
+    std::copy(hash.begin(), hash.begin() + Address::size, bytes.begin());
 }
 
 std::string Address::string() const {

@@ -51,8 +51,8 @@ TEST(NimiqAddress, String) {
 }
 
 TEST(NimiqAddress, FromPrivateKey) {
-    const EdPrivateKey privateKey(parse_hex("3e7703fe43a3828debcf55c46ceac92e243915ed6de3008b773ba14d15ee2944"));
+    const EdPrivateKey privateKey(parse_hex("e3cc33575834add098f8487123cd4bca543ee859b3e8cfe624e7e6a97202b756"));
     const auto publicKey = privateKey.getPublicKey();
     const auto address = Address(publicKey);
-    ASSERT_EQ(address.string(), "NQ61 BCY9 UPRJ P2DB MY1P 11T5 TJ7G 08BC VXVH");
+    ASSERT_EQ(address.string(), "NQ27 GBAY EVHP HK5X 6JHV JGFJ 5M3H BF4Y G7GD");
 }
