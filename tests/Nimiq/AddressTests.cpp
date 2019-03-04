@@ -50,9 +50,18 @@ TEST(NimiqAddress, String) {
     );
 }
 
+// TODO Refactor to SignerTests
 TEST(NimiqAddress, FromPrivateKey) {
     const EdPrivateKey privateKey(parse_hex("e3cc33575834add098f8487123cd4bca543ee859b3e8cfe624e7e6a97202b756"));
     const auto publicKey = privateKey.getPublicKey();
+    const auto address = Address(publicKey);
+    ASSERT_EQ(address.string(), "NQ27 GBAY EVHP HK5X 6JHV JGFJ 5M3H BF4Y G7GD");
+}
+
+TEST(NimiqAddress, FromPublicKey) {
+    std::array<uint8_t, 32> publicKey;
+    auto inHex = parse_hex("70c7492aaa9c9ac7a05bc0d9c5db2dae9372029654f71f0c7f95deed5099b702");
+    std::copy(inHex.begin(), inHex.end(), publicKey.begin());
     const auto address = Address(publicKey);
     ASSERT_EQ(address.string(), "NQ27 GBAY EVHP HK5X 6JHV JGFJ 5M3H BF4Y G7GD");
 }
