@@ -20,7 +20,8 @@ using namespace TW::Nimiq;
 
 static const char *BASE32_ALPHABET_NIMIQ = "0123456789ABCDEFGHJKLMNPQRSTUVXY";
 
-static void check_append(std::string &, char);
+static int check_append(int, uint8_t);
+static inline int check_add(int, int);
 
 bool Address::isValid(const std::string& stringPadded) {
     // Magic check
@@ -42,27 +43,22 @@ bool Address::isValid(const std::string& stringPadded) {
     if (base32_decode(string.data() + 4, 32, hash.data(), hash.size(), BASE32_ALPHABET_NIMIQ) == NULL)
         return false;
 
-    // Build checksum state
-    std::string check = "";
+    // Calculate checksum
+    int check = 0;
     for (int i = 4; i < 36; i++)
-        check_append(check, string[i]);
-    check.append("232600");
-
-    // Compress checksum state
-    std::string tmp;
-    for (int i = 0; i < (int)(std::ceil(check.length() / 6.0)); i++)
-        tmp = std::to_string(std::stoi(tmp + check.substr(i * 6, 6)) % 97);
-    int checksum_should = 98 - std::stoi(tmp);
+        check = check_append(check, string[i]);
+    check = check_add(check, 232600);
+    check = 98 - check;
 
     // Get checksum from input
-    int checksum_is;
+    int check_is;
     try {
-        checksum_is = std::stoi(string.substr(2, 2));
+        check_is = std::stoi(string.substr(2, 2));
     } catch (const std::invalid_argument &ia) {
         return false;
     }
 
-    if (checksum_is != checksum_should)
+    if (check_is != check)
         return false;
 
     return true;
@@ -97,8 +93,8 @@ Address::Address(const std::array<uint8_t, 32> publicKey) {
 std::string Address::string() const {
     // Identifier code + blank checksum
     std::string string = "NQ00";
-    // Checksum state representation of NQ00
-    std::string check = "";
+    // Checksum
+    int check = 0;
 
     // Calculate Base32 sum
     auto base32 = std::array<uint8_t, 33>();
@@ -111,32 +107,41 @@ std::string Address::string() const {
         // Copy Base32 data
         string.append(base32.begin() + i, base32.begin() + i + 4);
         // Progress checksum state
-        check_append(check, base32[i+0]);
-        check_append(check, base32[i+1]);
-        check_append(check, base32[i+2]);
-        check_append(check, base32[i+3]);
+        check = check_append(check, base32[i+0]);
+        check = check_append(check, base32[i+1]);
+        check = check_append(check, base32[i+2]);
+        check = check_append(check, base32[i+3]);
     }
-    check.append("232600");
-
-    // Compress checksum state
-    std::string tmp;
-    for (int i = 0; i < (int)(std::ceil(check.length() / 6.0)); i++)
-        tmp = std::to_string(std::stoi(tmp + check.substr(i * 6, 6)) % 97);
 
     // Finalize checksum
-    char checksum[3];
-    sprintf(checksum, "%02d", 98 - std::stoi(tmp));
+    check = check_add(check, 232600); // NQ00
+    check = 98 - check;
 
     // Set checksum in address
-    string[2] = checksum[0];
-    string[3] = checksum[1];
+    string[2] = '0' + (check / 10);
+    string[3] = '0' + (check % 10);
 
     return string;
 }
 
-static void check_append(std::string &check, char c) {
+static int check_append(int check, uint8_t c) {
+    int num;
     if (c >= '0' && c <= '9')
-        check.push_back(c);
+        num = c - '0';
     else
-        check.append(std::to_string(static_cast<int>(c - 55)));
+        num = c - '7';
+    return check_add(check, num);
+}
+
+static inline int check_add(int check, int num) {
+    if (num == 0)
+        return (check * 10) % 97;
+
+    // check = check * 10^(log_10(num))
+    for (
+        int remainder = num;
+        remainder > 0;
+        check *= 10, remainder /= 10
+    );
+    return (check + num) % 97;
 }
