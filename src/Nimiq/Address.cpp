@@ -105,7 +105,7 @@ std::string Address::string() const {
     base32_encode(bytes.begin(), Address::size,
         reinterpret_cast<char *>(base32.data()), 33, BASE32_ALPHABET_NIMIQ);
 
-    for (unsigned int i = 0; i < 32; i += 4) {
+    for (auto i = 0; i < 32; i += 4) {
         // Add spaces to output
         string.append(" ");
         // Copy Base32 data
